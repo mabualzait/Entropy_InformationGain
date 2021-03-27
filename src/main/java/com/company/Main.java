@@ -26,15 +26,30 @@ public class Main {
             for (int i = 1; i < NUMBER_OF_FEATURES; i++) {
                 readFeature(array, i);
             }
+            setEntropyValues(sample, featuresList);
             System.out.println(featuresList);
-            calculateEntropy(sample,featuresList);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private static void calculateEntropy(Feature sample, ArrayList<Feature> featuresList) {
+    private static void setEntropyValues(Feature sample, ArrayList<Feature> featuresList) {
+        sample.setEntropyValue(calculateEntropy(sample.getPositive(), sample.getNegative()));
+        for (Feature feature : featuresList) {
+            feature.setEntropyValue(calculateEntropy(feature.getPositive(), feature.getNegative()));
+        }
+    }
 
+    private static double calculateEntropy(double positive, double negative) {
+        double PosFraction = positive / (negative + positive);
+        double NegFraction = negative / (negative + positive);
+        if (negative == 0 && positive == 0) return 1;
+        double negativePart = NegFraction * (Math.log(NegFraction) / Math.log(2));
+        if (positive == 0) return -negativePart;
+        double positivePart = PosFraction * (Math.log(PosFraction) / Math.log(2));
+        if (negative == 0) return -positivePart;
+        return -positivePart - negativePart;
     }
 
     private static void getTableProperties(String[][] array) {
@@ -71,9 +86,9 @@ public class Main {
             Feature option = new Feature();
             option.setName(optionsType.toString());
             option.setNumberOfOptions(0);
-            int pos = 0;
-            int neg = 0;
-            for (int i = 0; i < SAMPLE_COUNT+1; i++) {
+            double pos = 0;
+            double neg = 0;
+            for (int i = 0; i < SAMPLE_COUNT + 1; i++) {
                 System.out.println("Option -->  " + array[i][index] + " and result = " + array[i][RESULT_COLUMN]);
                 if (array[i][index].equalsIgnoreCase(option.getName()) && array[i][RESULT_COLUMN].equalsIgnoreCase(arrResults[0].toString())) {
                     pos++;
@@ -85,6 +100,7 @@ public class Main {
             }
             option.setPositive(pos);
             option.setNegative(neg);
+            option.setEntropyValue(calculateEntropy(option.getPositive(), option.getNegative()));
             optionsList.add(option);
             System.out.println("positive options = " + pos + " negative = " + neg);
         }

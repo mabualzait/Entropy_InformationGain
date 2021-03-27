@@ -5,10 +5,10 @@ import java.util.List;
 public class Feature {
     private String name;
     private int numberOfOptions;
-    private int positive;
-    private int negative;
+    private double positive;
+    private double negative;
     private List<Feature> options;
-
+    private double entropyValue;
     public Feature() {
     }
 
@@ -26,21 +26,6 @@ public class Feature {
         this.name = name;
     }
 
-    public int getPositive() {
-        return positive;
-    }
-
-    public void setPositive(int positive) {
-        this.positive = positive;
-    }
-
-    public int getNegative() {
-        return negative;
-    }
-
-    public void setNegative(int negative) {
-        this.negative = negative;
-    }
 
     public List<Feature> getOptions() {
         return options;
@@ -57,5 +42,29 @@ public class Feature {
 
     public void setNumberOfOptions(int numberOfOptions) {
         this.numberOfOptions = numberOfOptions;
+    }
+
+    public double getEntropyValue() {
+        return entropyValue;
+    }
+
+    public void setEntropyValue(double entropyValue) {
+        this.entropyValue = entropyValue;
+    }
+
+    public double getNegative() {
+        return negative;
+    }
+
+    public void setNegative(double negative) {
+        this.negative = negative;
+    }
+
+    public double getPositive() {
+        return positive;
+    }
+
+    public void setPositive(double positive) {
+        this.positive = positive;
     }
 }
