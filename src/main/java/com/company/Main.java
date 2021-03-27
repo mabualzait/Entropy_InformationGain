@@ -11,29 +11,31 @@ public class Main {
     private static int NUMBER_OF_FEATURES = 0;
     private static int SAMPLE_COUNT = 0;
     private static int RESULT_COLUMN = 0;
-
-    static ArrayList<Feature> featuresList = new ArrayList<>();
-    static Feature sample;
-    static List<String[]> lines = new ArrayList<>();
-    static HashSet<String> resultOptions;
+    private static ArrayList<Feature> featuresList = new ArrayList<>();
+    private static Feature sample;
+    private static List<String[]> lines = new ArrayList<>();
+    private static HashSet<String> resultOptions;
 
     public static void main(String[] args) {
         try {
             readCsvFile();
             String[][] array = new String[lines.size()][0];
             lines.toArray(array);
-            NUMBER_OF_FEATURES = array[0].length - 2; // 1 id and 1 result column
-            RESULT_COLUMN = NUMBER_OF_FEATURES + 1;
-            SAMPLE_COUNT = array.length - 1; // 1 header row
+            getTableProperties(array);
             getSampleData(array);
             for (int i = 1; i < NUMBER_OF_FEATURES; i++) {
                 readFeature(array, i);
-
             }
             System.out.println(featuresList);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private static void getTableProperties(String[][] array) {
+        NUMBER_OF_FEATURES = array[0].length - 2; // 1 id and 1 result column
+        RESULT_COLUMN = NUMBER_OF_FEATURES + 1;
+        SAMPLE_COUNT = array.length - 1; // 1 header row
     }
 
     private static void readFeature(String[][] array, int index) {
@@ -49,7 +51,7 @@ public class Main {
         int numberOfPositive = 0;
         int numberOfNegative = 0;
         Object[] arrResults = resultOptions.toArray();
-        for (int i = 1; i < SAMPLE_COUNT; i++) {
+        for (int i = 0; i < SAMPLE_COUNT; i++) {
             System.out.println("Column -->  " + array[i][index] + " and result = " + array[i][RESULT_COLUMN]);
             if (array[i][RESULT_COLUMN].equalsIgnoreCase(arrResults[0].toString())) numberOfPositive++;
             else numberOfNegative++;
@@ -112,7 +114,6 @@ public class Main {
                         negativeCount++;
             }
         }
-
         for (String type : resultOptions) {
             System.out.println(type);
         }
