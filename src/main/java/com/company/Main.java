@@ -27,10 +27,27 @@ public class Main {
                 readFeature(array, i);
             }
             setEntropyValues(sample, featuresList);
-            System.out.println(featuresList);
-
+            setInformationGain();
+            printResults();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private static void printResults() {
+        for (Feature feature : featuresList) {
+            System.out.println("Feature " + feature.getName() + " |IG= " + feature.getInformationGain());
+        }
+    }
+
+    private static void setInformationGain() {
+        for (Feature feature : featuresList) {
+            double subGain = 0;
+            for (Feature option : feature.getOptions()) {
+                double value = (option.getPositive() + option.getNegative()) / (feature.getNegative() + feature.getPositive());
+                subGain += -value * option.getEntropyValue();
+            }
+            feature.setInformationGain(feature.getEntropyValue() + subGain);
         }
     }
 
@@ -63,22 +80,16 @@ public class Main {
         HashSet<String> optionsSet = new HashSet<>();
         List<Feature> optionsList = new ArrayList<>();
         for (int i = 0; i < SAMPLE_COUNT; i++) {
-            System.out.println("Column -->  " + array[i][index]);
             if (i == 0) feature.setName(array[i][index]);
             else optionsSet.add(array[i][index]);
         }
-        int optionsCount = optionsSet.size();
         int numberOfPositive = 0;
         int numberOfNegative = 0;
         Object[] arrResults = resultOptions.toArray();
         for (int i = 0; i < SAMPLE_COUNT; i++) {
-            System.out.println("Column -->  " + array[i][index] + " and result = " + array[i][RESULT_COLUMN]);
             if (array[i][RESULT_COLUMN].equalsIgnoreCase(arrResults[0].toString())) numberOfPositive++;
             else numberOfNegative++;
         }
-
-        System.out.println("Feature " + feature.getName() + " has +" + numberOfPositive + " and -" + numberOfNegative);
-        System.out.println("Options count " + optionsCount);
         feature.setPositive(numberOfPositive);
         feature.setNegative(numberOfNegative);
         Object[] optionsTypes = optionsSet.toArray();
@@ -89,7 +100,6 @@ public class Main {
             double pos = 0;
             double neg = 0;
             for (int i = 0; i < SAMPLE_COUNT + 1; i++) {
-                System.out.println("Option -->  " + array[i][index] + " and result = " + array[i][RESULT_COLUMN]);
                 if (array[i][index].equalsIgnoreCase(option.getName()) && array[i][RESULT_COLUMN].equalsIgnoreCase(arrResults[0].toString())) {
                     pos++;
                     option.setNumberOfOptions(option.getNumberOfOptions() + 1);
@@ -102,7 +112,6 @@ public class Main {
             option.setNegative(neg);
             option.setEntropyValue(calculateEntropy(option.getPositive(), option.getNegative()));
             optionsList.add(option);
-            System.out.println("positive options = " + pos + " negative = " + neg);
         }
         feature.setOptions(optionsList);
         featuresList.add(feature);
@@ -140,11 +149,6 @@ public class Main {
                         negativeCount++;
             }
         }
-        for (String type : resultOptions) {
-            System.out.println(type);
-        }
-        System.out.println("Positive = " + positiveCount);
-        System.out.println("Negative = " + negativeCount);
         sample = new Feature("Sample Data", positiveCount, negativeCount);
     }
 

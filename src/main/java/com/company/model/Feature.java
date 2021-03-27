@@ -9,6 +9,7 @@ public class Feature {
     private double negative;
     private List<Feature> options;
     private double entropyValue;
+    private double informationGain;
     public Feature() {
     }
 
@@ -66,5 +67,13 @@ public class Feature {
 
     public void setPositive(double positive) {
         this.positive = positive;
+    }
+
+    public double getInformationGain() {
+        return informationGain;
+    }
+
+    public void setInformationGain(double informationGain) {
+        this.informationGain = informationGain;
     }
 }
