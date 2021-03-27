@@ -10,9 +10,12 @@ public class Main {
 
     private static int NUMBER_OF_FEATURES = 0;
     private static int SAMPLE_COUNT = 0;
-    static ArrayList<Feature> featuresList;
+    private static int RESULT_COLUMN = 0;
+
+    static ArrayList<Feature> featuresList = new ArrayList<>();
     static Feature sample;
     static List<String[]> lines = new ArrayList<>();
+    static HashSet<String> resultOptions;
 
     public static void main(String[] args) {
         try {
@@ -20,22 +23,62 @@ public class Main {
             String[][] array = new String[lines.size()][0];
             lines.toArray(array);
             NUMBER_OF_FEATURES = array[0].length - 2; // 1 id and 1 result column
+            RESULT_COLUMN = NUMBER_OF_FEATURES + 1;
             SAMPLE_COUNT = array.length - 1; // 1 header row
             getSampleData(array);
-            System.out.println(Arrays.toString(array[0]));
+            for (int i = 1; i < NUMBER_OF_FEATURES; i++) {
+                readFeature(array, i);
+
+            }
+            System.out.println(featuresList);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //Database connection using H2 driver
-       /* Class.forName ("org.h2.Driver");
-        Connection conn = DriverManager.getConnection ("jdbc:h2:~/test", "sa","");
-        Statement st = conn.createStatement();
-        ResultSet resultSet = st.executeQuery("SELECT * FROM CLASSIFICATION");
-        System.out.println(resultSet);
-        resultSet.getString(1);
-        conn.close();*/
+    }
 
-     }
+    private static void readFeature(String[][] array, int index) {
+        Feature feature = new Feature();
+        HashSet<String> optionsSet = new HashSet<>();
+        List<Feature> optionsList = new ArrayList<>();
+        for (int i = 0; i < SAMPLE_COUNT; i++) {
+            System.out.println("Column -->  " + array[i][index]);
+            if (i == 0) feature.setName(array[i][index]);
+            else optionsSet.add(array[i][index]);
+        }
+        int optionsCount = optionsSet.size();
+        int numberOfPositive = 0;
+        int numberOfNegative = 0;
+        Object[] arrResults = resultOptions.toArray();
+        for (int i = 1; i < SAMPLE_COUNT; i++) {
+            System.out.println("Column -->  " + array[i][index] + " and result = " + array[i][RESULT_COLUMN]);
+            if (array[i][RESULT_COLUMN].equalsIgnoreCase(arrResults[0].toString())) numberOfPositive++;
+            else numberOfNegative++;
+        }
+
+        System.out.println("Feature " + feature.getName() + " has +" + numberOfPositive + " and -" + numberOfNegative);
+        System.out.println("Options count " + optionsCount);
+        feature.setPositive(numberOfPositive);
+        feature.setNegative(numberOfNegative);
+        Object[] optionsTypes = optionsSet.toArray();
+        for (Object optionsType : optionsTypes) {
+            Feature option = new Feature();
+            option.setName(optionsType.toString());
+            int pos = 0;
+            int neg = 0;
+            for (int i = 1; i < SAMPLE_COUNT; i++) {
+                System.out.println("Option -->  " + array[i][index] + " and result = " + array[i][RESULT_COLUMN]);
+                if (array[i][index].equalsIgnoreCase(option.getName()) && array[i][RESULT_COLUMN].equalsIgnoreCase(arrResults[0].toString()))
+                    pos++;
+                else neg++;
+            }
+            option.setPositive(pos);
+            option.setNegative(neg);
+            optionsList.add(option);
+            System.out.println("positive options = " + pos + " negative = " + neg);
+        }
+        feature.setOptions(optionsList);
+        featuresList.add(feature);
+    }
 
     private static void readCsvFile() throws IOException {
         String line = "";
@@ -47,23 +90,15 @@ public class Main {
         }
     }
 
-    private static void printing() {
-        System.out.println("Nummber of Features: " + NUMBER_OF_FEATURES);
-
-        for (int i = 0; i < NUMBER_OF_FEATURES; i++) {
-            System.out.println("Feature " + i + "= " + featuresList.get(i).getName());
-        }
-    }
-
     private static void getSampleData(String[][] array) {
-        HashSet<String> types = new HashSet<>();
+        resultOptions = new HashSet<>();
         for (int i = 1; i < SAMPLE_COUNT; i++) {
-            types.add(array[i][NUMBER_OF_FEATURES + 1]);
+            resultOptions.add(array[i][NUMBER_OF_FEATURES + 1]);
         }
-        int typesCount = types.size();
-        String []arr = new String[typesCount];
+        int typesCount = resultOptions.size();
+        String[] arr = new String[typesCount];
         int counter = 0;
-        for (String ele : types) {
+        for (String ele : resultOptions) {
             arr[counter++] = ele;
         }
         int positiveCount = 0;
@@ -78,44 +113,12 @@ public class Main {
             }
         }
 
-        for (String type : types) {
+        for (String type : resultOptions) {
             System.out.println(type);
         }
-        System.out.println("Positive = "+ positiveCount);
-        System.out.println("Negative = "+ negativeCount);
-       sample = new Feature("Sample Data", positiveCount, negativeCount);
-    }
-
-
-    private static void getFeaturesData(int i) {
-        Feature feature = new Feature();
-        Scanner myObj = new Scanner(System.in);
-        System.out.println("Enter Feature " + i + " Name");
-        feature.setName(myObj.nextLine());
-        System.out.println("How many options Feature " + feature.getName() + " has:-");
-        feature.setNumberOfOptions(myObj.nextInt());
-        List<Feature> optionsList = new ArrayList<>();
-        myObj.nextLine();
-        for (int count = 0; count < feature.getNumberOfOptions(); count++) {
-            Feature option = new Feature();
-            System.out.println("Enter Option " + (count + 1) + " name");
-            String optionName = myObj.nextLine();
-            option.setName(optionName);
-            System.out.println("Enter Option " + (count + 1) + " Positive count");
-            option.setPositive(Integer.parseInt(myObj.nextLine()));
-            System.out.println("Enter Option " + (count + 1) + " Negative count");
-            option.setNegative(Integer.parseInt(myObj.nextLine()));
-            optionsList.add(option);
-        }
-
-        feature.setOptions(optionsList);
-        featuresList.add(feature);
-    }
-
-    private static void getNumberOfFeatures() {
-        Scanner myObj = new Scanner(System.in);
-        System.out.println("Enter Number of features");
-        NUMBER_OF_FEATURES = Integer.parseInt(myObj.nextLine());
+        System.out.println("Positive = " + positiveCount);
+        System.out.println("Negative = " + negativeCount);
+        sample = new Feature("Sample Data", positiveCount, negativeCount);
     }
 
 }
