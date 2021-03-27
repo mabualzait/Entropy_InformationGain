@@ -27,9 +27,14 @@ public class Main {
                 readFeature(array, i);
             }
             System.out.println(featuresList);
+            calculateEntropy(sample,featuresList);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private static void calculateEntropy(Feature sample, ArrayList<Feature> featuresList) {
+
     }
 
     private static void getTableProperties(String[][] array) {
@@ -65,13 +70,18 @@ public class Main {
         for (Object optionsType : optionsTypes) {
             Feature option = new Feature();
             option.setName(optionsType.toString());
+            option.setNumberOfOptions(0);
             int pos = 0;
             int neg = 0;
-            for (int i = 1; i < SAMPLE_COUNT; i++) {
+            for (int i = 0; i < SAMPLE_COUNT+1; i++) {
                 System.out.println("Option -->  " + array[i][index] + " and result = " + array[i][RESULT_COLUMN]);
-                if (array[i][index].equalsIgnoreCase(option.getName()) && array[i][RESULT_COLUMN].equalsIgnoreCase(arrResults[0].toString()))
+                if (array[i][index].equalsIgnoreCase(option.getName()) && array[i][RESULT_COLUMN].equalsIgnoreCase(arrResults[0].toString())) {
                     pos++;
-                else neg++;
+                    option.setNumberOfOptions(option.getNumberOfOptions() + 1);
+                } else if (array[i][index].equalsIgnoreCase(option.getName()) && array[i][RESULT_COLUMN].equalsIgnoreCase(arrResults[1].toString())) {
+                    neg++;
+                    option.setNumberOfOptions(option.getNumberOfOptions() + 1);
+                }
             }
             option.setPositive(pos);
             option.setNegative(neg);
