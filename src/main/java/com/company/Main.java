@@ -43,7 +43,7 @@ public class Main {
         BufferedReader br = new BufferedReader(new FileReader("classification.csv"));
         while ((line = br.readLine()) != null)   //returns a Boolean value
         {
-            lines.add(line.split(","));
+            lines.add(line.split(splitBy));
         }
     }
 
@@ -61,7 +61,7 @@ public class Main {
             types.add(array[i][NUMBER_OF_FEATURES + 1]);
         }
         int typesCount = types.size();
-        String arr[] = new String[typesCount];
+        String []arr = new String[typesCount];
         int counter = 0;
         for (String ele : types) {
             arr[counter++] = ele;
