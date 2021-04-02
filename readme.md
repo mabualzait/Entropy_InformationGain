@@ -4,6 +4,8 @@ Entropy is the average rate at which information is produced by a stochastic sou
 
 The information gain is the amount of information gained about a random variable or signal from observing another random variable.
 
+![Decision Tree Classification](dt.png)
+
 This project includes the following 
 - Reading CSV file.
 - Get the main properties. 
@@ -15,4 +17,4 @@ This project includes the following
 - The last step is to calculate the information gain for each feature and output the result so you can decide what is the best feature to go with for classification trees.
   
 
-![Decision Tree Classification](dt.png)
+
