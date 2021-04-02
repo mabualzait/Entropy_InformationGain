@@ -13,3 +13,6 @@ This project includes the following
 - Then it will get the data and count each feature options.
 - Calculates the Entropy for each Feature then for each option.
 - The last step is to calculate the information gain for each feature and output the result so you can decide what is the best feature to go with for classification trees.
+  
+
+![Decision Tree Classification](dt.png)
