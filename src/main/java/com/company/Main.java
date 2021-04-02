@@ -23,7 +23,7 @@ public class Main {
             lines.toArray(array);
             getTableProperties(array);
             getSampleData(array);
-            for (int i = 1; i < NUMBER_OF_FEATURES; i++) {
+            for (int i = 1; i <= NUMBER_OF_FEATURES; i++) {
                 readFeature(array, i);
             }
             setEntropyValues(sample, featuresList);
@@ -37,6 +37,10 @@ public class Main {
     private static void printResults() {
         for (Feature feature : featuresList) {
             System.out.println("Feature " + feature.getName() + " |IG= " + feature.getInformationGain());
+            for( Feature options: feature.getOptions()){
+                System.out.println("Feature " + options.getName() + " |Entropy= " + options.getEntropyValue());
+
+            }
         }
     }
 
