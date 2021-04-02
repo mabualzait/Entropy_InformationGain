@@ -37,10 +37,13 @@ public class Main {
     private static void printResults() {
         for (Feature feature : featuresList) {
             System.out.println("Feature " + feature.getName() + " |IG= " + feature.getInformationGain());
-            for( Feature options: feature.getOptions()){
-                System.out.println("Feature " + options.getName() + " |Entropy= " + options.getEntropyValue());
-
+            System.out.println("Feature " + feature.getName() + " |Entropy= " + feature.getEntropyValue());
+            for (Feature options : feature.getOptions()) {
+                System.out.println("Feature " + feature.getName() + " ---------> " + options.getName() + " [" + options.getPositive() + "+, " + options.getNegative() + "-]");
+                System.out.println("Feature " + feature.getName() + " ---------> " + options.getName() + " |Entropy= " + options.getEntropyValue());
+                System.out.println("************************************************");
             }
+            System.out.println();
         }
     }
 
